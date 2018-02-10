@@ -45,6 +45,12 @@ $(TARGET): $(OBJECTS)
 
 .PHONY: all build clean
 
+ASTYLE_FLAGS= --style=stroustrup --align-reference=type --align-pointer=type --break-blocks \
+              --indent-namespaces --indent=tab --add-brackets 
+format:
+	astyle $(ASTYLE_FLAGS) include/FastRandom/*
+	astyle $(ASTYLE_FLAGS) src/FastRandom/*
+
 build:
 	@mkdir -p $(APP_DIR)
 	@mkdir -p $(OBJ_DIR)

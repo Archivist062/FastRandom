@@ -1,6 +1,6 @@
 /**
  * Licenced under MIT Licence
- *  
+ *
  * (c) Ludovic 'Archivist' Lagouardette 2018
  *
  */
@@ -11,17 +11,17 @@
 #include <string>
 #include <random>
 
-namespace archivist{
+namespace archivist {
 
-	class fast_uuid{};
-	class balanced_uuid{};
-	class strong_uuid{};
+	class fast_uuid {};
+	class balanced_uuid {};
+	class strong_uuid {};
 
-	struct UUID{
+	struct UUID {
 		static thread_local std::random_device src;
 		static thread_local uint8_t balance;
 		uint64_t state[2];
-		UUID(fast_uuid) : UUID(){}
+		UUID(fast_uuid) : UUID() {}
 		UUID()
 		{
 			state[0]=PRNG(9998);
@@ -30,9 +30,9 @@ namespace archivist{
 		UUID(strong_uuid)
 		{
 			uint32_t internal=src();
-			uint32_t cross=src() | std::chrono::duration_cast< std::chrono::microseconds >(
-				std::chrono::system_clock::now().time_since_epoch()
-			).count();
+			uint32_t cross=src() + std::chrono::duration_cast< std::chrono::microseconds >(
+			                   std::chrono::system_clock::now().time_since_epoch()
+			               ).count();
 
 			state[0]=PRNG(internal);
 			PRNG_feed(cross);
@@ -41,12 +41,10 @@ namespace archivist{
 		UUID(balanced_uuid)
 		{
 			balance++;
-			if(balance!=0)
-			{
+
+			if(balance!=0) {
 				*this=UUID();
-			}
-			else
-			{
+			} else {
 				*this=UUID(strong_uuid());
 			}
 		}
