@@ -34,6 +34,6 @@ namespace internal{
 
 	inline void PRNG_feed_alt(uint64_t feed)
 	{
-		internal::_entropy_contributor.fetch_xor(feed,std::memory_order_relaxed);
+		internal::_entropy_contributor.fetch_add(feed,std::memory_order_relaxed);
 	}
 }

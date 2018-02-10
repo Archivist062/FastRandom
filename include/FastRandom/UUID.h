@@ -5,6 +5,7 @@
  *
  */
 
+#pragma once
 #include "FastRandom/Base_PRNG.h"
 #include <chrono>
 #include <string>
@@ -40,7 +41,7 @@ namespace archivist{
 		UUID(balanced_uuid)
 		{
 			balance++;
-			if(balance%128)
+			if(balance!=0)
 			{
 				*this=UUID();
 			}
