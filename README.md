@@ -7,15 +7,15 @@ FastRandom is a small library made to generate random enough numbers and UUIDs. 
 ```c++
 #include <FastRandom/UUID.h>
 
-archivist::UUID weak{fast_uuid()}; // generate a hasty UUID
-archivist::UUID medium{balanced_uuid()}; // generate a probably strong UUID
-archivist::UUID good{strong_uuid()}; // generate a really random UUID
+archivist::uuid_fast     weak; // generate a hasty UUID
+archivist::uuid_balanced medium; // generate a probably strong UUID
+archivist::uuid_strong   good; // generate a really random UUID
 ```
 
 ```c++
 #include <FastRandom/Base_PRNG.h>
 
-uint64_t number1 = archivist::PRNG(); // Generate a random number
-uint64_t number2 = archivist::PRNG(4682); // Generate a random number and mixes some entropy (thread wide)
-archivist::PRNG_feed(some_entropy); // Give some entropy system wide
+uint64_t number1 = archivist::prng(); // Generate a random number
+uint64_t number2 = archivist::prng(4682); // Generate a random number and mixes some entropy (thread wide)
+archivist::prng_feed(some_entropy); // Give some entropy system wide
 ```
