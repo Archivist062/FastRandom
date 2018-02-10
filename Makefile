@@ -57,3 +57,5 @@ build:
 
 clean:
 	rm -rf build/*
+	rm -rf src/FastRandom/*.orig
+	rm -rf include/FastRandom/*.orig

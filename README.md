@@ -4,6 +4,10 @@
 
 FastRandom is a small library made to generate random enough numbers and UUIDs. The randomity is not that guarranted, but at least, the output have really 100% of chance of being trash.
 
+For each batch of 64 bits generated, 56 are random AND independent (it is not me that says it, it is the code). This means the entropy you can expect of 1 UUID is at least 112 bits out of 128. This is sufficient for most purposes.
+
+The point being that the generation of random data is faster than most other pseudo-random number generators.
+
 ```c++
 #include <FastRandom/UUID.h>
 
