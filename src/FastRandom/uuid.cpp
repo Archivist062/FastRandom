@@ -5,13 +5,12 @@
  *
  */
 
-#include <FastRandom/UUID.h>
+#include <FastRandom/uuid.h>
 #include "catch.hpp"
 #include <set>
 #include <iostream>
 
-thread_local std::random_device archivist::UUID::src;
-thread_local uint8_t archivist::UUID::balance;
+thread_local std::random_device archivist::strong_uuid::src;
 
 using namespace archivist;
 
@@ -19,10 +18,10 @@ using namespace archivist;
 TEST_CASE("Test of fast UUIDs validity")
 {
 	const size_t loop=5000000;
-	std::set<UUID> rec;
+	std::set<basic_uuid> rec;
 
 	for(size_t lo=0; lo<loop; lo++) {
-		UUID m{fast_uuid()};
+		fast_uuid m{};
 		REQUIRE(rec.find(m)==rec.end());
 		rec.insert(m);
 	}
@@ -36,35 +35,34 @@ TEST_CASE("Test of fast UUIDs")
 
 	for(size_t lo=0; lo<loop; lo++) {
 		{
-			UUID m{fast_uuid()};
+			fast_uuid m{};
 		}
 		{
-			UUID m{fast_uuid()};
+			fast_uuid m{};
 		}
 		{
-			UUID m{fast_uuid()};
+			fast_uuid m{};
 		}
 		{
-			UUID m{fast_uuid()};
+			fast_uuid m{};
 		}
 		{
-			UUID m{fast_uuid()};
-		}
-
-		{
-			UUID m{fast_uuid()};
+			fast_uuid m{};
 		}
 		{
-			UUID m{fast_uuid()};
+			fast_uuid m{};
 		}
 		{
-			UUID m{fast_uuid()};
+			fast_uuid m{};
 		}
 		{
-			UUID m{fast_uuid()};
+			fast_uuid m{};
 		}
 		{
-			UUID m{fast_uuid()};
+			fast_uuid m{};
+		}
+		{
+			fast_uuid m{};
 		}
 	}
 
@@ -85,35 +83,34 @@ TEST_CASE("Test of strong UUIDs")
 
 	for(size_t lo=0; lo<loop; lo++) {
 		{
-			UUID m{strong_uuid()};
+			strong_uuid m{};
 		}
 		{
-			UUID m{strong_uuid()};
+			strong_uuid m{};
 		}
 		{
-			UUID m{strong_uuid()};
+			strong_uuid m{};
 		}
 		{
-			UUID m{strong_uuid()};
+			strong_uuid m{};
 		}
 		{
-			UUID m{strong_uuid()};
-		}
-
-		{
-			UUID m{strong_uuid()};
+			strong_uuid m{};
 		}
 		{
-			UUID m{strong_uuid()};
+			strong_uuid m{};
 		}
 		{
-			UUID m{strong_uuid()};
+			strong_uuid m{};
 		}
 		{
-			UUID m{strong_uuid()};
+			strong_uuid m{};
 		}
 		{
-			UUID m{strong_uuid()};
+			strong_uuid m{};
+		}
+		{
+			strong_uuid m{};
 		}
 	}
 
@@ -134,35 +131,34 @@ TEST_CASE("Test of balanced UUIDs")
 
 	for(size_t lo=0; lo<loop; lo++) {
 		{
-			UUID m{balanced_uuid()};
+			balanced_uuid m{};
 		}
 		{
-			UUID m{balanced_uuid()};
+			balanced_uuid m{};
 		}
 		{
-			UUID m{balanced_uuid()};
+			balanced_uuid m{};
 		}
 		{
-			UUID m{balanced_uuid()};
+			balanced_uuid m{};
 		}
 		{
-			UUID m{balanced_uuid()};
-		}
-
-		{
-			UUID m{balanced_uuid()};
+			balanced_uuid m{};
 		}
 		{
-			UUID m{balanced_uuid()};
+			balanced_uuid m{};
 		}
 		{
-			UUID m{balanced_uuid()};
+			balanced_uuid m{};
 		}
 		{
-			UUID m{balanced_uuid()};
+			balanced_uuid m{};
 		}
 		{
-			UUID m{balanced_uuid()};
+			balanced_uuid m{};
+		}
+		{
+			balanced_uuid m{};
 		}
 	}
 

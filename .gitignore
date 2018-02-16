@@ -1,5 +1,3 @@
 build/apps/tests
-build/objects/src/FastRandom/Base_PRNG.o
-build/objects/src/FastRandom/MemoryRandomize.o
-build/objects/src/FastRandom/UUID.o
+build/objects/src/FastRandom/*.o
 *.orig

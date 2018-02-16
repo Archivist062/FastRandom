@@ -5,7 +5,7 @@
  *
  */
 
-#include "FastRandom/Base_PRNG.h"
+#include "FastRandom/base_prng.h"
 #include <random>
 #include <set>
 #include <iostream>
@@ -16,12 +16,12 @@ namespace archivist {
 	thread_local uint64_t internal::prngState_a=0x00ULL;
 	thread_local uint64_t internal::prngState_c=0x7A7A6565655B5B;
 	std::atomic<uint64_t> internal::_entropy_contributor;
-	thread_local uint16_t internal::balance=0;
-	thread_local std::mt19937_64 internalrnd;
+	thread_local uint8_t internal::balance=0;
+	thread_local std::mt19937_64 internal_rnd;
 
 	uint64_t internal::rnd()
 	{
-		return internalrnd();
+		return internal_rnd();
 	}
 
 	class dummy168783486732 {
@@ -30,8 +30,8 @@ namespace archivist {
 		{
 			std::random_device rnd;
 			internal::prngState_a=rnd()*0x0000000100000000+rnd();
-			PRNG_feed_alt(rnd()*0x0000000100000000+rnd());
-			internalrnd.seed(rnd()*0x0000000100000000+rnd());
+			prng_feed_alt(rnd()*0x0000000100000000+rnd());
+			internal_rnd.seed(rnd()*0x0000000100000000+rnd());
 		}
 	};
 	thread_local dummy168783486732 dummy168783486732_inst;
@@ -43,7 +43,7 @@ TEST_CASE("Testing the PRNG basic generator")
 	std::set<uint64_t> rec;
 
 	for(size_t i=0; i<loop; i++) {
-		uint64_t data=archivist::PRNG();
+		uint64_t data=archivist::prng();
 		REQUIRE(rec.find(data)==rec.end());
 		rec.insert(data);
 	}
@@ -55,16 +55,16 @@ TEST_CASE("Test of PRNG speed")
 	auto begin = std::chrono::system_clock::now();
 
 	for(size_t lo=0; lo<loop; lo++) {
-		archivist::PRNG();
-		archivist::PRNG();
-		archivist::PRNG();
-		archivist::PRNG();
-		archivist::PRNG();
-		archivist::PRNG();
-		archivist::PRNG();
-		archivist::PRNG();
-		archivist::PRNG();
-		archivist::PRNG();
+		archivist::prng();
+		archivist::prng();
+		archivist::prng();
+		archivist::prng();
+		archivist::prng();
+		archivist::prng();
+		archivist::prng();
+		archivist::prng();
+		archivist::prng();
+		archivist::prng();
 	}
 
 	auto end = std::chrono::system_clock::now();
@@ -83,16 +83,16 @@ TEST_CASE("Test of auto fed PRNG speed")
 	auto begin = std::chrono::system_clock::now();
 
 	for(size_t lo=0; lo<loop; lo++) {
-		archivist::PRNG_auto_feed();
-		archivist::PRNG_auto_feed();
-		archivist::PRNG_auto_feed();
-		archivist::PRNG_auto_feed();
-		archivist::PRNG_auto_feed();
-		archivist::PRNG_auto_feed();
-		archivist::PRNG_auto_feed();
-		archivist::PRNG_auto_feed();
-		archivist::PRNG_auto_feed();
-		archivist::PRNG_auto_feed();
+		archivist::prng_auto_feed();
+		archivist::prng_auto_feed();
+		archivist::prng_auto_feed();
+		archivist::prng_auto_feed();
+		archivist::prng_auto_feed();
+		archivist::prng_auto_feed();
+		archivist::prng_auto_feed();
+		archivist::prng_auto_feed();
+		archivist::prng_auto_feed();
+		archivist::prng_auto_feed();
 	}
 
 	auto end = std::chrono::system_clock::now();
@@ -111,7 +111,7 @@ TEST_CASE("Testing the PRNG basic generator (statistics)")
 	std::set<uint64_t> rec;
 
 	for(size_t i=0; i<loop; i++) {
-		uint64_t data=archivist::PRNG();
+		uint64_t data=archivist::prng();
 		rec.insert(data);
 	}
 
@@ -149,7 +149,7 @@ TEST_CASE("Testing the PRNG basic generator (statistics 2)")
 	std::set<uint64_t> rec;
 
 	for(size_t i=0; i<loop; i++) {
-		uint64_t data=archivist::PRNG();
+		uint64_t data=archivist::prng();
 		rec.insert(data);
 	}
 
@@ -184,7 +184,7 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics)")
 	std::set<uint64_t> rec;
 
 	for(size_t i=0; i<loop; i++) {
-		uint64_t data=archivist::PRNG_auto_feed();
+		uint64_t data=archivist::prng_auto_feed();
 		rec.insert(data);
 	}
 
@@ -213,7 +213,7 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics)")
 	}
 
 	std::cout<<"\nTotal of ok_bits (autofeed):"<<ok_bits<<std::endl;
-	REQUIRE(ok_bits>=56);
+	REQUIRE(ok_bits>=60);
 }
 
 TEST_CASE("Testing the PRNG auto fed generator (statistics 2)")
@@ -222,7 +222,7 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics 2)")
 	std::set<uint64_t> rec;
 
 	for(size_t i=0; i<loop; i++) {
-		uint64_t data=archivist::PRNG_auto_feed();
+		uint64_t data=archivist::prng_auto_feed();
 		rec.insert(data);
 	}
 
@@ -248,5 +248,5 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics 2)")
 
 	std::cout<<"Total of independantly ok_bits (autofeed):"<<ok_bits<<std::endl;
 
-	REQUIRE(ok_bits>=56*56);
+	REQUIRE(ok_bits>=60*60);
 }
