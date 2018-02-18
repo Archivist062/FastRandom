@@ -1,3 +1,6 @@
+#ifndef archivist_uuid_h
+#define archivist_uuid_h
+
 /**
  * Licenced under MIT Licence
  *
@@ -7,14 +10,12 @@
 
 #include "FastRandom/base_prng.h"
 #include <chrono>
+#include <iostream>
 #include <string>
 #include <random>
 
 namespace archivist
 {
-   class fast_uuid {};
-   class balanced_uuid {};
-   class strong_uuid {};
 
    enum class uuid_modes
    {
@@ -27,18 +28,14 @@ namespace archivist
       static thread_local uint8_t balance;
       uint64_t state[2]{};
 
-      basic_uuid()
-      {
-         init_default();
-      }
-
       inline void init_default()
       {
          state[0] = prng(9998);
          state[1] = prng(17);
+         //std::cout << "init_default\n";
       }
 
-      inline void init_strong()
+      void init_strong()
       {
          uint32_t internal = src();
          uint32_t cross = src() | std::chrono::duration_cast< std::chrono::microseconds >(
@@ -47,6 +44,7 @@ namespace archivist
          state[0] = prng(internal);
          prng_feed(cross);
          state[1] = prng(cross);
+         //std::cout << "init_strong\n";
       }
 
       bool operator==(const basic_uuid& rhs) const
@@ -66,7 +64,8 @@ namespace archivist
    {
       uuid_balanced()
       {
-         if(++balance % 128)
+         balance++;
+         if(balance % 128)
             init_default();
 
          else
@@ -76,8 +75,9 @@ namespace archivist
 
    struct uuid_fast : public basic_uuid
    {
-      uuid_fast() : basic_uuid()
+      uuid_fast()
       {
+         init_default();
       }
    };
 
@@ -90,3 +90,5 @@ namespace archivist
    };
 
 }
+
+#endif//archivist_uuid_h
