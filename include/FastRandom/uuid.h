@@ -32,10 +32,9 @@ namespace archivist
       {
          state[0] = prng(9998);
          state[1] = prng(17);
-         //std::cout << "init_default\n";
       }
 
-      void init_strong()
+      inline void init_strong()
       {
          uint32_t internal = src();
          uint32_t cross = src() | std::chrono::duration_cast< std::chrono::microseconds >(
@@ -44,7 +43,6 @@ namespace archivist
          state[0] = prng(internal);
          prng_feed(cross);
          state[1] = prng(cross);
-         //std::cout << "init_strong\n";
       }
 
       bool operator==(const basic_uuid& rhs) const
