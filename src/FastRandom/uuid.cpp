@@ -6,7 +6,9 @@
  */
 
 #include <FastRandom/uuid.h>
+#ifdef USE_CATCH
 #include "catch.hpp"
+#endif
 #include <set>
 #include <iostream>
 
@@ -15,7 +17,7 @@ thread_local std::random_device archivist::strong_uuid::src;
 using namespace archivist;
 
 
-#ifndef NO_CATCH
+#ifdef USE_CATCH
 TEST_CASE("Test of fast UUIDs validity")
 {
 	const size_t loop=5000000;

@@ -46,11 +46,11 @@ $(OBJ_DIR)/%.test.o: %.cpp
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-	$(CXX) -DNO_CATCH $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
 $(TARGET): $(TEST_OBJECTS) build
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) -o $(APP_DIR)/$(TARGETNAME) src/$(TARGET) $(TEST_OBJECTS)
+	$(CXX) -DUSE_CATCH $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) -o $(APP_DIR)/$(TARGETNAME) src/$(TARGET) $(TEST_OBJECTS)
 
 lib: $(OBJECTS) build
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) --shared -o $(APP_DIR)/libFastRandom.so $(OBJECTS)
@@ -59,7 +59,7 @@ lib: $(OBJECTS) build
 install: lib
 	cp $(APP_DIR)/libFastRandom.so /usr/local/lib
 	cp $(APP_DIR)/libFastRandom.a /usr/local/lib
-	cp include/FastRandom /usr/local/include -r
+	cp include/FastRandom /usr/local/include/FastRandom -r
 
 .PHONY: all build clean
 
