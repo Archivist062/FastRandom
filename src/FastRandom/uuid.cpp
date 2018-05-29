@@ -15,6 +15,7 @@ thread_local std::random_device archivist::strong_uuid::src;
 using namespace archivist;
 
 
+#ifndef NO_CATCH
 TEST_CASE("Test of fast UUIDs validity")
 {
 	const size_t loop=5000000;
@@ -171,3 +172,4 @@ TEST_CASE("Test of balanced UUIDs")
 	        << "ns"
 	        << std::endl;
 }
+#endif

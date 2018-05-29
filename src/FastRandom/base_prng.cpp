@@ -9,7 +9,9 @@
 #include <random>
 #include <set>
 #include <iostream>
+#ifndef NO_CATCH
 #include "catch.hpp"
+#endif
 
 namespace archivist {
 		#ifndef COMPAT_TLS
@@ -64,7 +66,7 @@ namespace archivist {
 	#endif // COMPAT_TLS
 		dummy168783486732 dummy168783486732_inst;
 }
-
+#ifndef NO_CATCH
 TEST_CASE("Testing the PRNG basic generator")
 {
 	const size_t loop = 5000;
@@ -278,3 +280,4 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics 2)")
 
 	REQUIRE(ok_bits>=60*60);
 }
+#endif
