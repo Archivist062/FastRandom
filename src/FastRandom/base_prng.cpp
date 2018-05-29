@@ -12,16 +12,32 @@
 #include "catch.hpp"
 
 namespace archivist {
-	thread_local uint64_t internal::prngState=0x7A7A7A7A5B5B5B5B;
-	thread_local uint64_t internal::prngState_a=0x00ULL;
-	thread_local uint64_t internal::prngState_c=0x7A7A6565655B5B;
+		#ifndef COMPAT_TLS
+			thread_local uint64_t internal::prngState;
+			thread_local uint64_t internal::prngState_a;
+			thread_local uint64_t internal::prngState_c;
+			thread_local uint8_t internal::balance;
+			thread_local std::mt19937_64 internal_rnd;
+		#else
+			 std::atomic<uint64_t> internal::prngState;
+			 std::atomic<uint64_t> internal::prngState_c;
+			 std::atomic<uint64_t> internal::prngState_a;
+			 std::atomic<uint8_t> internal::balance;
+			 std::mt19937_64 internal_rnd;
+			 std::mutex rnd_guard;
+		#endif // COMPAT_TLS
 	std::atomic<uint64_t> internal::_entropy_contributor;
-	thread_local uint8_t internal::balance=0;
-	thread_local std::mt19937_64 internal_rnd;
 
 	uint64_t internal::rnd()
 	{
-		return internal_rnd();
+		#ifndef COMPAT_TLS
+			return internal_rnd();
+		#else
+			rnd_guard.lock();
+			auto n = internal_rnd();
+			rnd_guard.unlock();
+			return n;
+		#endif // COMPAT_TLS
 	}
 
 	class dummy168783486732 {
@@ -30,16 +46,28 @@ namespace archivist {
 		{
 			std::random_device rnd;
 			internal::prngState_a=rnd()*0x0000000100000000+rnd();
+			internal::prngState_c=0x7A7A6565655B5BULL;
+			internal::prngState=0x7A7A7A7A5B5B5B5BULL;
+			internal::balance=0;
 			prng_feed_alt(rnd()*0x0000000100000000+rnd());
+		#ifndef COMPAT_TLS
 			internal_rnd.seed(rnd()*0x0000000100000000+rnd());
+		#else
+			rnd_guard.lock();
+			internal_rnd.seed(rnd()*0x0000000100000000+rnd());
+			rnd_guard.unlock();
+		#endif // COMPAT_TLS
 		}
 	};
-	thread_local dummy168783486732 dummy168783486732_inst;
+	#ifndef COMPAT_TLS
+	thread_local 
+	#endif // COMPAT_TLS
+		dummy168783486732 dummy168783486732_inst;
 }
 
 TEST_CASE("Testing the PRNG basic generator")
 {
-	const size_t loop = 5000000;
+	const size_t loop = 5000;
 	std::set<uint64_t> rec;
 
 	for(size_t i=0; i<loop; i++) {

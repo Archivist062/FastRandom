@@ -20,15 +20,19 @@
 
 
 CXX      := -c++
-CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3
-LDFLAGS  := -L/usr/lib -lstdc++ -lm -lpthread 
+CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3 -std=c++14
+# -DCOMPAT_TLS
+# ^ Enable this flag if your compiler ABI have issues with thread local storage
+LDFLAGS  := -L/usr/lib -lstdc++ -lm -lpthread
 BUILD    := build
 OBJ_DIR  := $(BUILD)/objects
 APP_DIR  := $(BUILD)/apps
 TARGET   := tests.cpp
 INCLUDE  := -Iinclude/
 SRC      :=                      \
-	$(wildcard src/FastRandom/*.cpp)         \
+	src/FastRandom/memory_randomize.cpp         \
+	src/FastRandom/uuid.cpp         \
+	src/FastRandom/base_prng.cpp         \
 
 OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 TARGETNAME := $(TARGET:%.cpp=%)

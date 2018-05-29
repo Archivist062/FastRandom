@@ -13,10 +13,17 @@
 namespace archivist {
 
 	namespace internal {
-		extern thread_local uint64_t prngState;
-		extern thread_local uint64_t prngState_c;
-		extern thread_local uint64_t prngState_a;
-		extern thread_local uint8_t balance;
+		#ifndef COMPAT_TLS
+			extern thread_local uint64_t prngState;
+			extern thread_local uint64_t prngState_c;
+			extern thread_local uint64_t prngState_a;
+			extern thread_local uint8_t balance;
+		#else
+			extern std::atomic<uint64_t> prngState;
+			extern std::atomic<uint64_t> prngState_c;
+			extern std::atomic<uint64_t> prngState_a;
+			extern std::atomic<uint8_t> balance;
+		#endif // COMPAT_TLS
 		extern std::atomic<uint64_t> _entropy_contributor;
 		uint64_t rnd();
 	}
