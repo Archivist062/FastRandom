@@ -56,6 +56,11 @@ lib: $(OBJECTS) build
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) --shared -o $(APP_DIR)/libFastRandom.so $(OBJECTS)
 	ar rvs $(APP_DIR)/libFastRandom.a $(OBJECTS)
 
+install: lib
+	cp $(APP_DIR)/libFastRandom.so /usr/local/lib
+	cp $(APP_DIR)/libFastRandom.a /usr/local/lib
+	cp include/FastRandom /usr/local/include -r
+
 .PHONY: all build clean
 
 ASTYLE_FLAGS= --style=stroustrup --align-reference=type --align-pointer=type --break-blocks \
