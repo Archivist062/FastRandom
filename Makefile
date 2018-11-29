@@ -20,7 +20,7 @@
 
 
 CXX      := -c++
-CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3 -std=c++14 
+CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3 -std=c++14 -fPIC
 # -DCOMPAT_TLS
 # ^ Enable this flag if your compiler ABI have issues with thread local storage
 LDFLAGS  := -L/usr/lib -lstdc++ -lm -lpthread
