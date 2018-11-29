@@ -4,9 +4,9 @@
 
 FastRandom is a small library made to generate random enough numbers and UUIDs. The randomity is not that guarranted, but at least, the output have really 100% of chance of being trash.
 
-For each batch of 64 bits generated, 56 are random AND independent (it is not me that says it, it is the code). This means the entropy you can expect of 1 UUID is at least 112 bits out of 128. This is sufficient for most purposes.
+For each batch of 64 bits generated, 54 are random AND independent (it is not me that says it, it is the code). This means the entropy you can expect of 1 UUID is at least 108 bits out of 128. This is sufficient for most purposes.
 
-If you use the auto_fed PRNG, the guarranted entropy is of at least 60 bits, meaning a UUID has then 120 bits of entropy in balanced mode.
+If you use the auto_fed PRNG, the guarranted entropy is of at least 56 bits, meaning a UUID has then 112 bits of entropy in balanced mode.
 
 The point being that the generation of random data is faster than most other pseudo-random number generators.
 
