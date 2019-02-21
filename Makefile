@@ -20,8 +20,9 @@
 
 
 CXX      := -c++
-CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3 -std=c++14 \
- -DCOMPAT_TLS
+CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3 -fPIC -std=c++14 \
+# -DCOMPAT_TLS 
+# -DNO_TLS
 # ^ Enable this flag if your compiler ABI have issues with thread local storage
 LDFLAGS  := -L/usr/lib -lstdc++ -lm -lpthread
 BUILD    := build
@@ -42,7 +43,7 @@ all: build $(TARGET)
 
 $(OBJ_DIR)/%.test.o: %.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) -fopenmp -DUSE_CATCH $(INCLUDE) -o $@ -c $<
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
@@ -50,7 +51,7 @@ $(OBJ_DIR)/%.o: %.cpp
 
 $(TARGET): $(TEST_OBJECTS) build
 	@mkdir -p $(@D)
-	$(CXX) -DUSE_CATCH $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) -o $(APP_DIR)/$(TARGETNAME) src/$(TARGET) $(TEST_OBJECTS)
+	$(CXX) -DUSE_CATCH -fopenmp $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) -o $(APP_DIR)/$(TARGETNAME) src/$(TARGET) $(TEST_OBJECTS)
 
 lib: $(OBJECTS) build
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) --shared -o $(APP_DIR)/libFastRandom.so $(OBJECTS)

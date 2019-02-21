@@ -35,7 +35,6 @@ TEST_CASE("Test of fast UUIDs")
 {
 	const size_t loop=50000;
 	auto begin = std::chrono::system_clock::now();
-
 	for(size_t lo=0; lo<loop; lo++) {
 		{
 			fast_uuid m{};
@@ -75,7 +74,14 @@ TEST_CASE("Test of fast UUIDs")
 	        << std::chrono::duration_cast< std::chrono::nanoseconds >(
 	            end-begin
 	        ).count()/loop/10
-	        << "ns"
+	        << "ns, "
+			<< "Total "
+			<< loop*10
+			<< " in "
+			<< std::chrono::duration_cast< std::chrono::nanoseconds >(
+	            end-begin
+	        ).count()
+			<< "ns"
 	        << std::endl;
 }
 

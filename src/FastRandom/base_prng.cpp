@@ -11,6 +11,7 @@
 #include <iostream>
 #ifdef USE_CATCH
 #include "catch.hpp"
+#include <thread>
 #endif
 
 namespace archivist {
@@ -21,12 +22,20 @@ namespace archivist {
 			thread_local uint8_t internal::balance;
 			thread_local std::mt19937_64 internal_rnd;
 		#else
-			 std::atomic<uint64_t> internal::prngState;
-			 std::atomic<uint64_t> internal::prngState_c;
-			 std::atomic<uint64_t> internal::prngState_a;
-			 std::atomic<uint8_t> internal::balance;
-			 std::mt19937_64 internal_rnd;
-			 std::mutex rnd_guard;
+			#ifdef NO_TLS
+				uint64_t internal::prngState;
+				uint64_t internal::prngState_a;
+				uint64_t internal::prngState_c;
+				uint8_t internal::balance;
+				std::mt19937_64 internal_rnd;
+			#else
+				std::atomic<uint64_t> internal::prngState;
+				std::atomic<uint64_t> internal::prngState_c;
+				std::atomic<uint64_t> internal::prngState_a;
+				std::atomic<uint8_t> internal::balance;
+				std::mt19937_64 internal_rnd;
+				std::mutex rnd_guard;
+			#endif
 		#endif // COMPAT_TLS
 	std::atomic<uint64_t> internal::_entropy_contributor;
 
@@ -35,10 +44,14 @@ namespace archivist {
 		#ifndef COMPAT_TLS
 			return internal_rnd();
 		#else
-			rnd_guard.lock();
-			auto n = internal_rnd();
-			rnd_guard.unlock();
-			return n;
+			#ifdef NO_TLS
+				return internal_rnd();
+			#else
+				rnd_guard.lock();
+				auto n = internal_rnd();
+				rnd_guard.unlock();
+				return n;
+			#endif
 		#endif // COMPAT_TLS
 	}
 
@@ -55,9 +68,13 @@ namespace archivist {
 		#ifndef COMPAT_TLS
 			internal_rnd.seed(rnd()*0x0000000100000000+rnd());
 		#else
-			rnd_guard.lock();
-			internal_rnd.seed(rnd()*0x0000000100000000+rnd());
-			rnd_guard.unlock();
+			#ifdef NO_TLS
+				internal_rnd.seed(rnd()*0x0000000100000000+rnd());
+			#else
+				rnd_guard.lock();
+				internal_rnd.seed(rnd()*0x0000000100000000+rnd());
+				rnd_guard.unlock();
+			#endif
 		#endif // COMPAT_TLS
 		}
 	};
@@ -140,6 +157,11 @@ TEST_CASE("Testing the PRNG basic generator (statistics)")
 	const size_t loop = 5000000;
 	std::set<uint64_t> rec;
 
+	std::thread friend_gen([=](){
+	for(size_t i=0; i<loop*2; i++) {
+		uint64_t data=archivist::prng();
+	}});
+
 	for(size_t i=0; i<loop; i++) {
 		uint64_t data=archivist::prng();
 		rec.insert(data);
@@ -170,6 +192,7 @@ TEST_CASE("Testing the PRNG basic generator (statistics)")
 	}
 
 	std::cout<<"\nTotal of ok_bits:"<<ok_bits<<std::endl;
+	friend_gen.join();
 	REQUIRE(ok_bits>=56);
 }
 
@@ -177,6 +200,11 @@ TEST_CASE("Testing the PRNG basic generator (statistics 2)")
 {
 	const size_t loop = 5000000;
 	std::set<uint64_t> rec;
+
+	std::thread friend_gen([=](){
+	for(size_t i=0; i<loop*2; i++) {
+		uint64_t data=archivist::prng();
+	}});
 
 	for(size_t i=0; i<loop; i++) {
 		uint64_t data=archivist::prng();
@@ -205,6 +233,7 @@ TEST_CASE("Testing the PRNG basic generator (statistics 2)")
 
 	std::cout<<"Total of independantly ok_bits:"<<ok_bits<<std::endl;
 
+	friend_gen.join();
 	REQUIRE(ok_bits>=56*56);
 }
 
@@ -212,6 +241,11 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics)")
 {
 	const size_t loop = 5000000;
 	std::set<uint64_t> rec;
+
+	std::thread friend_gen([=](){
+	for(size_t i=0; i<loop*2; i++) {
+		uint64_t data=archivist::prng_auto_feed();
+	}});
 
 	for(size_t i=0; i<loop; i++) {
 		uint64_t data=archivist::prng_auto_feed();
@@ -243,6 +277,7 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics)")
 	}
 
 	std::cout<<"\nTotal of ok_bits (autofeed):"<<ok_bits<<std::endl;
+	friend_gen.join();
 	REQUIRE(ok_bits>=60);
 }
 
@@ -250,6 +285,11 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics 2)")
 {
 	const size_t loop = 5000000;
 	std::set<uint64_t> rec;
+
+	std::thread friend_gen([=](){
+	for(size_t i=0; i<loop*2; i++) {
+		uint64_t data=archivist::prng_auto_feed();
+	}});
 
 	for(size_t i=0; i<loop; i++) {
 		uint64_t data=archivist::prng_auto_feed();
@@ -278,6 +318,7 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics 2)")
 
 	std::cout<<"Total of independantly ok_bits (autofeed):"<<ok_bits<<std::endl;
 
+	friend_gen.join();
 	REQUIRE(ok_bits>=60*60);
 }
 #endif
