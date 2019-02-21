@@ -20,9 +20,14 @@
 
 
 CXX      := -c++
+<<<<<<< HEAD
 CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3 -fPIC -std=c++14 \
 # -DCOMPAT_TLS 
 # -DNO_TLS
+=======
+CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3 -std=c++14 -fPIC
+# -DCOMPAT_TLS
+>>>>>>> 41b4c33cb2403c9d88b8d1fe54d6d6abaa968afe
 # ^ Enable this flag if your compiler ABI have issues with thread local storage
 LDFLAGS  := -L/usr/lib -lstdc++ -lm -lpthread
 BUILD    := build
