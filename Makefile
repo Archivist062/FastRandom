@@ -20,7 +20,7 @@
 
 
 CXX      := -c++
-CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3 -fPIC -std=c++14 \
+CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -O3 -fPIC -std=c++17 \
 # -DCOMPAT_TLS 
 # -DNO_TLS
 # ^ Enable this flag if your compiler ABI have issues with thread local storage
@@ -49,7 +49,7 @@ $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
-$(TARGET): $(TEST_OBJECTS) build
+$(APP_DIR)/$(TARGETNAME): $(TEST_OBJECTS) build
 	@mkdir -p $(@D)
 	$(CXX) -DUSE_CATCH -fopenmp $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) -o $(APP_DIR)/$(TARGETNAME) src/$(TARGET) $(TEST_OBJECTS)
 
@@ -61,6 +61,10 @@ install: lib
 	cp $(APP_DIR)/libFastRandom.so /usr/local/lib
 	cp $(APP_DIR)/libFastRandom.a /usr/local/lib
 	cp include/FastRandom /usr/local/include/FastRandom -r
+
+test:
+	$(CXX) -fopenmp $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) -o $(APP_DIR)/garbage_out $(SRC) src/garbage_out.cpp
+	sh ./diehard.sh
 
 .PHONY: all build clean
 

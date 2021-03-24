@@ -60,9 +60,9 @@ namespace archivist {
 		dummy168783486732()
 		{
 			std::random_device rnd;
-			internal::prngState_a=rnd()*0x0000000100000000+rnd();
-			internal::prngState_c=0x7A7A6565655B5BULL;
-			internal::prngState=0x7A7A7A7A5B5B5B5BULL;
+			internal::prngState_a=rnd()*0x0000000100000000+rnd()+rnd();
+			internal::prngState_c=11993700284427866731ULL;
+			internal::prngState=9582438874911951439ULL;
 			internal::balance=0;
 			prng_feed_alt(rnd()*0x0000000100000000+rnd());
 		#ifndef COMPAT_TLS
@@ -171,7 +171,7 @@ TEST_CASE("Testing the PRNG basic generator (statistics)")
 
 	for(auto val : rec) {
 		for(auto b=0; b<64; b++) {
-			cumul[b]+= ((1<<b)&val)!=0;
+			cumul[b]+= ((1ull<<b)&val) != 0;
 		}
 	}
 
@@ -216,7 +216,7 @@ TEST_CASE("Testing the PRNG basic generator (statistics 2)")
 	for(auto val : rec) {
 		for(auto b=0; b<64; b++) {
 			for(auto c=0; c<64; c++) {
-				cumul[b][c]+= (((1<<b)&val)!=0) && (((1<<c)&val)!=0);
+				cumul[b][c]+= (((1ull<<b)&val)!=0) && (((1ull<<c)&val)!=0);
 			}
 		}
 	}
@@ -256,7 +256,7 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics)")
 
 	for(auto val : rec) {
 		for(auto b=0; b<64; b++) {
-			cumul[b]+= ((1<<b)&val)!=0;
+			cumul[b]+= ((1ull<<b)&val)!=0;
 		}
 	}
 
@@ -301,7 +301,7 @@ TEST_CASE("Testing the PRNG auto fed generator (statistics 2)")
 	for(auto val : rec) {
 		for(auto b=0; b<64; b++) {
 			for(auto c=0; c<64; c++) {
-				cumul[b][c]+= (((1<<b)&val)!=0) && (((1<<c)&val)!=0);
+				cumul[b][c]+= (((1ull<<b)&val)!=0) && (((1ull<<c)&val)!=0);
 			}
 		}
 	}

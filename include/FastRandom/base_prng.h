@@ -35,36 +35,43 @@ namespace archivist {
 		uint64_t rnd();
 	}
 
-	inline uint64_t prng(uint64_t gift=42)
+	inline uint32_t prng(uint64_t gift=42)
 	{
+		// Acquire potential entropy changes
 		internal::prngState_c+= internal::_entropy_contributor.load(std::memory_order_relaxed);
-		internal::prngState_a= (internal::prngState_a << 17)+internal::prngState_c;
-		internal::prngState+=gift;
-		internal::prngState=internal::prngState*internal::prngState_a+internal::prngState_c;
-		return internal::prngState;
+
+		// LCG + gift
+		internal::prngState_a= gift + (internal::prngState_a * 18446744073709551557ull)+internal::prngState_c;
+
+		// +XOR LCG with the other state as mixer
+		internal::prngState+=(internal::prngState^internal::prngState_a)+internal::prngState_c;
+
+		return internal::prngState >> 32ull;
 	}
 
-	inline uint64_t prng_auto_feed()
+	inline uint32_t prng_auto_feed()
 	{
 		internal::prngState_c+= internal::_entropy_contributor.load(std::memory_order_relaxed);
-		internal::prngState_a= (internal::prngState_a << 17)+internal::prngState_c;
+		internal::prngState_a= (internal::prngState_a * 18446744073709551557ull)+internal::prngState_c;
 
 		if(internal::balance%32==0) {
-			internal::prngState=(internal::prngState<<1)+internal::rnd();
+			internal::prngState_a+=internal::prngState+internal::rnd();
 		}
 
 		internal::balance++;
-		internal::prngState=internal::prngState*internal::prngState_a+internal::prngState_c;
-		return internal::prngState;
+		internal::prngState=(internal::prngState^internal::prngState_a)+internal::prngState_c;
+		return internal::prngState >> 32ull;
 	}
 
 	inline void prng_feed(uint64_t feed)
 	{
-		internal::_entropy_contributor.fetch_xor(feed,std::memory_order_relaxed);
+		internal::_entropy_contributor.fetch_xor(feed >> 32ull,std::memory_order_relaxed);
+		prng(feed);
 	}
 
 	inline void prng_feed_alt(uint64_t feed)
 	{
-		internal::_entropy_contributor.fetch_add(feed,std::memory_order_relaxed);
+		internal::_entropy_contributor.fetch_add(feed >> 32ull,std::memory_order_relaxed);
+		prng(feed);
 	}
 }

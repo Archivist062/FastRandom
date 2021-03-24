@@ -31,8 +31,8 @@ namespace archivist {
 	public:
 		fast_uuid()
 		{
-			state[0]=prng(9998);
-			state[1]=prng(17);
+			state[0]=prng(9998)+4294967296*prng(72);
+			state[1]=prng(17)+4294967296*prng(102);
 		}
 	};
 
@@ -40,8 +40,8 @@ namespace archivist {
 	public:
 		balanced_uuid()
 		{
-			state[0]=prng_auto_feed();
-			state[1]=prng_auto_feed();
+			state[0]=prng_auto_feed()+4294967296*prng_auto_feed();
+			state[1]=prng_auto_feed()+4294967296*prng_auto_feed();
 		}
 	};
 
@@ -55,9 +55,9 @@ namespace archivist {
 			                   std::chrono::system_clock::now().time_since_epoch()
 			               ).count();
 
-			state[0]=prng(internal);
+			state[0]=prng(internal)+4294967296*prng_auto_feed();
 			prng_feed(cross);
-			state[1]=prng(cross);
+			state[1]=prng(cross)+4294967296*prng_auto_feed();
 		}
 	};
 

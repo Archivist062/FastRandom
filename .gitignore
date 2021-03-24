@@ -3,3 +3,4 @@ build/objects/src/FastRandom/*.o
 *.orig
 build/apps/libFastRandom.so
 build/apps/libFastRandom.a
+build/apps/garbage_out
